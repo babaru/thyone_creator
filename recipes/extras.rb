@@ -19,11 +19,11 @@ if config['ban_spiders']
 end
 
 if config['paginate']
-  say_wizard "Adding 'will_paginate'"
-  if recipes.include? 'mongoid'
-    gem 'will_paginate_mongoid'
-  else
-    gem 'will_paginate', '>= 3.0.3'
+  say_wizard "Adding 'kaminari'"
+  gem 'kaminari', '>= 0.13.0'
+  after_bundler do
+    generate 'kaminari:config'
+    get "https://raw.github.com/gist/2863989/f1ff348df24072d4b24c874f6ef0f537510c0a41/kaminari.zh-CN.yml", 'config/locales/kaminari.zh-CN.yml'
   end
   recipes << 'paginate'
 end
@@ -34,6 +34,23 @@ if config['jsruntime']
   unless recipes.include? 'jsruntime'
     gem 'therubyracer', :group => :assets, :platform => :ruby
   end
+end
+
+if config['i18n']
+  say_wizard "Setting default i18n locales"
+  gem 'rails-i18n'
+  
+  inject_into_file 'config/application.rb', :before => '# config.i18n.default_locale' do <<-RUBY
+config.i18n.locale = 'zh-CN'
+    config.i18n.default_locale = 'zh-CN'
+RUBY
+  end
+  
+  inject_into_file 'config/application.rb', :before => '# config.time_zone' do <<-RUBY
+config.time_zone = 'Beijing'
+RUBY
+  end
+  
 end
 
 __END__
@@ -54,7 +71,10 @@ config:
       prompt: Would you like to set a robots.txt file to ban spiders?
   - paginate:
       type: boolean
-      prompt: Would you like to add 'will_paginate' for pagination?
+      prompt: Would you like to add 'kaminari' for pagination?
   - jsruntime:
       type: boolean
       prompt: Add 'therubyracer' JavaScript runtime (for Linux users without node.js)?
+  - i18n:
+      type: boolean
+      prompt: Set project default i18n locales to zh-CN?
