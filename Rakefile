@@ -1,8 +1,9 @@
 require 'bundler'
+require "bundler/gem_tasks"
 Bundler.setup :development
 
 require 'mg'
-MG.new "rails_apps_composer.gemspec"
+MG.new "thyone_creator.gemspec"
 
 require 'rspec/core/rake_task'
 
