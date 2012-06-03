@@ -19,6 +19,11 @@ after_bundler do
 		else
 			generate "active_admin:install #{config['user_model']}"
 	end
+  
+  if config['i18n']
+    get "https://raw.github.com/gregbell/active_admin/master/lib/active_admin/locales/zh_cn.yml", "config/locales/active_admin.zh-CN.yml"
+    gsub_file "config/locales/active_admin.zh-CN.yml", /zh_cn/, "zh-CN"
+  end
 end
 
 __END__
@@ -33,4 +38,7 @@ config:
   - user_model:
       type: string
       prompt: "What model will you use for admin users ? type 'skip' to skip this step (default is AdminUser)"
+  - i18n:
+      type: boolean
+      prompt: "Would you want to set active admin to zh-CN locale?"
 
